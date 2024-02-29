@@ -1,0 +1,57 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<html>
+
+<head>
+
+    <title>Rolar D6</title>
+    <link rel="stylesheet" href="../static/css/home.css">
+
+</head>
+
+
+<body>
+
+    <div class="container">
+        <h1 class="title">Clique no dado para rolar!</h1>
+        <a href="#" class="dice-box" id="roll-button">
+            <span class="icon" name="dice-outline" id="dice-icon"><ion-icon name="dice-outline"></ion-icon></span>
+        </a>
+        <ul id="roll-history">
+        </ul>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var rollButton = document.getElementById('roll-button');
+            var diceIcon = document.getElementById('dice-icon');
+            var rollHistory = document.getElementById('roll-history');
+            var rollCount = 0;
+
+            rollButton.addEventListener('click', function () {
+                diceIcon.classList.add('roll-animation');
+                setTimeout(function () {
+                    diceIcon.classList.remove('roll-animation');
+                }, 1000);
+                fetch('{% url "roll_dice" %}')
+                    .then(response => response.json())
+                    .then(data => {
+                        rollCount++;
+                        diceIcon.innerHTML = data.icon;
+                        var newRollEntry = document.createElement('li');
+                        newRollEntry.innerHTML = 'Rolagem n°' + rollCount + ' - rolou ' + data.icon + '|' + data.result;
+                        rollHistory.insertBefore(newRollEntry, rollHistory.firstChild);
+                    });
+            });
+        });
+
+
+
+    </script>
+
+</body>
+
+</html>
+
+{% endblock %}
